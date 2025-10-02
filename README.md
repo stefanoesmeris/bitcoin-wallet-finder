@@ -1,3 +1,3 @@
-a simple script that tries to discover a bitcoin wallet by guessing
-its generate a seed phase and look if it was did any transactions
-if any transactiona was performed, it's considered a interesting wallet 
+A simple script that attempts to discover a Bitcoin wallet through guesswork.
+It generates a seed phase and checks whether any transactions have been made.
+If any transactions have been made, it is considered an interesting wallet.
