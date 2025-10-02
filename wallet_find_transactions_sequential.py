@@ -87,6 +87,7 @@ def get_mnemonic(M, N):
     global found_flag
     lista = []
     lista = seq.get_next(int(M),int(N))
+    X = 0
     for phrase in lista:
         mnemonic = str(phrase)
         print(mnemonic)
@@ -99,8 +100,9 @@ def get_mnemonic(M, N):
         time.sleep(0.5)  # Sleep for half a second
         data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
         time.sleep(0.5)  # Sleep for half a second
-        #print("write file for")
+        print("CheckSum ", X)
         write_file(data,mnemonic)
+        X += 1
 
 # Valida o mnemonic
 #if not Bip39MnemonicValidator(mnemonic).IsValid():
@@ -137,4 +139,5 @@ def main():
         print("\n🛑 Loop stopped by user.")
 
 if __name__ == "__main__":
+
     main()
