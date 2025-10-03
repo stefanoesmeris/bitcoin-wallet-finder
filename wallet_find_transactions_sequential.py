@@ -15,7 +15,7 @@
 import bip_utils
 import requests
 import pandas as pd
-import time
+import time, os
 from sequencial import Sequencial
 
 found_flag = True
@@ -116,13 +116,26 @@ def main():
     global seed_bytes
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
     contador = 0
-    
+    # Nome do arquivo onde o contador será armazenado
+    arquivo = "contador.txt"
+    # Verifica se o arquivo existe
+    if os.path.exists(arquivo):
+        with open(arquivo, "r") as f:
+            try:
+                contador = int(f.read())
+            except ValueError:
+                contador = 0 # Se nao for valido
+    else:
+        with open(arquivo, "w") as f:
+            f.write(str(contador))
     try:
         while True:
             #
             print("Contador :", contador)
             get_mnemonic(int(contador), int(12))
             contador += 1
+            with open(arquivo, "w") as f:
+                f.write(str(contador))
             if contador > 2047:
                 break
     except KeyboardInterrupt:
@@ -131,5 +144,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
