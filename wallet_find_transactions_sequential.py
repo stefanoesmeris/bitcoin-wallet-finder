@@ -18,7 +18,7 @@ import pandas as pd
 import time, os, json
 from sequencial import Sequencial
 
-seed_bytes = ""
+#seed_bytes = ""
 
 # Palavras sementes (substitua pelas suas)
 #mnemonic = ""
@@ -91,19 +91,19 @@ def get_mnemonic(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     #M = 0  # Index of word from BIP39
     seq = Sequencial(0)
-    global seed_bytes
+    #global seed_bytes
     lista = []
     lista = seq.get_next(int(M),int(N))
     X = 0
     for phrase in lista:
         mnemonic = str(phrase)
-        print(mnemonic)
+        #print(mnemonic)
         #mnemonic = "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"
-        seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+        #seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
         data = []
-        print("CheckSum ", X, "of ", len(lista)-1)
+        print("CheckSum ", X, "of ", len(lista)-1, "Seed ", mnemonic)
         data = check_addresses(Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
-        print("Looking BIP44 Legacy address \n")
+        print("Looking BIP44 Legacy\n")
         time.sleep(0.5)  # Sleep for half a second
         data = check_addresses(Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic)
         print("Looking BIP49 P2SH\n")
@@ -139,7 +139,7 @@ def main():
                 f.write(str(contador))
             if contador > 2047:
                 break
-            print("sleep for 30 seconds")
+            print("sleep for 30 seconds - because no one is made of iron")
             time.sleep(30)  # Sleep for 30 seconds
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
