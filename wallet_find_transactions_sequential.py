@@ -49,6 +49,7 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
     results = []
     global found_flag
     found_flag = True
+    good_seed = False
     for i in range(5):  # Varrer os primeiros 5 endereços externos
         path = f"m/{bip_number}'/0'/0'/0/{i}"
         addr = wallet.Purpose().Coin().Account(0).Change(Bip44Changes.CHAIN_EXT).AddressIndex(i).PublicKey().ToAddress()
@@ -56,6 +57,7 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
         status = "Movimentado" if active else "unused"
         if active:
             found_flag = False
+            good_seed = True
             results.append({
                 "Tipo": label,
                 "Endereço": addr,
@@ -63,10 +65,18 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
                 "Status": status,
                 "Mnemonic": mnemonic  # ⚠️ Cuidado: incluir apenas se necessário
             })
-            print("Write a good seed")
-            write_file(results,mnemonic)            
+            print("Found a good seed")
+        if good_seed:    
+            write_good_seed_to_file(results)
+            print(type(results),"\n")
+            print(results)
     return results
-    #write_file(results,mnemonic)
+
+def write_good_seed_to_file(data):
+    df = pd.DataFrame(data)
+    df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
+    print("\n✅ Resultado exportado para 'carteira_bitcoin_.txt'")
+    
 
 def write_file(data,mnemonic):
     global found_flag
@@ -78,7 +88,7 @@ def write_file(data,mnemonic):
     else:
         df = pd.DataFrame(data)
         df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
-    print("\n✅ Resultado exportado para 'carteira_bitcoin_.txt'")   
+    print("\n✅ Resultado")   
 
 def get_mnemonic(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
@@ -102,7 +112,7 @@ def get_mnemonic(M, N):
         data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
         time.sleep(0.5)  # Sleep for half a second
         print("CheckSum ", X)
-        write_file(data,mnemonic)
+        #write_file(data,mnemonic)
         X += 1
 
 # Valida o mnemonic
@@ -138,6 +148,8 @@ def main():
                 f.write(str(contador))
             if contador > 2047:
                 break
+            if contador % 16 == 0:
+                time.sleep(5)  # Sleep for 5 seconds
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
 
