@@ -101,13 +101,16 @@ def get_mnemonic(M, N):
         #mnemonic = "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"
         seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
         data = []
+        print("CheckSum ", X, "of ", len(lista)-1)
         data = check_addresses(Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
+        print("Looking BIP44 Legacy address \n")
         time.sleep(0.5)  # Sleep for half a second
         data = check_addresses(Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic)
+        print("Looking BIP49 P2SH\n")
         time.sleep(0.5)  # Sleep for half a second
         data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
+        print("Looking BIP84 SegWit\n")
         time.sleep(0.5)  # Sleep for half a second
-        print("CheckSum ", X, "of ", len(lista)-1)
         X += 1
 #
 def main():
@@ -136,8 +139,8 @@ def main():
                 f.write(str(contador))
             if contador > 2047:
                 break
-            print("sleep for 3 seconds")
-            time.sleep(3)  # Sleep for 3 seconds
+            print("sleep for 30 seconds")
+            time.sleep(30)  # Sleep for 30 seconds
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
 #
