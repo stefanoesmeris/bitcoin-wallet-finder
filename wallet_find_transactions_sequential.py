@@ -118,26 +118,16 @@ def main():
     
     try:
         while True:
-            # Generate random mnemonic
-            ##mnemonic = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
-            # Gera a seed
-            ##seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
-            # Executa para os três padrões
-            ##data = []
-            ##data = check_addresses(Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
-            ##time.sleep(0.5)  # Sleep for half a second
-            ##data = check_addresses(Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic)
-            ##time.sleep(0.5)  # Sleep for half a second
-            ##data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
-            ##time.sleep(0.5)  # Sleep for half a second
-            ##write_file(data,mnemonic)
-            #time.sleep(1.5)  # Sleep for half a second
+            #
             print("Contador :", contador)
             get_mnemonic(int(contador), int(12))
             contador += 1
+            if contador > 2047:
+                break
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
 
 if __name__ == "__main__":
 
     main()
+
