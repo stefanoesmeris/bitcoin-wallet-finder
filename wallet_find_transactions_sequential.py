@@ -18,7 +18,6 @@ import pandas as pd
 import time, os
 from sequencial import Sequencial
 
-found_flag = True
 seed_bytes = ""
 
 # Palavras sementes (substitua pelas suas)
@@ -47,8 +46,6 @@ def has_activity(addr):
 def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
     wallet = derivation.FromSeed(seed_bytes, coin_type)
     results = []
-    global found_flag
-    found_flag = True
     good_seed = False
     for i in range(5):  # Varrer os primeiros 5 endereços externos
         path = f"m/{bip_number}'/0'/0'/0/{i}"
@@ -56,7 +53,6 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
         active = has_activity(addr)
         status = "Movimentado" if active else "unused"
         if active:
-            found_flag = False
             good_seed = True
             results.append({
                 "Tipo": label,
@@ -66,36 +62,22 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
                 "Mnemonic": mnemonic  # ⚠️ Cuidado: incluir apenas se necessário
             })
             print("Found a good seed")
-        if good_seed:    
-            write_good_seed_to_file(results)
-            print(type(results),"\n")
-            print(results)
+    if good_seed:    
+        write_good_seed_to_file(results)
+        print(type(results),"\n")
+        print(results)
     return results
 
 def write_good_seed_to_file(data):
     df = pd.DataFrame(data)
     df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
-    print("\n✅ Resultado exportado para 'carteira_bitcoin_.txt'")
-    
-
-def write_file(data,mnemonic):
-    global found_flag
-    if found_flag:
-        data = []
-        data.append({"Status": 'unused :', "Mnemonic": mnemonic})
-        df = pd.DataFrame(data)        
-        df.to_csv("s_carteira_bitcoin_not_found.txt", mode='a', index=False)
-    else:
-        df = pd.DataFrame(data)
-        df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
-    print("\n✅ Resultado")   
+    print("\n✅ Resultado exportado para 's_carteira_bitcoin_good.txt'")
 
 def get_mnemonic(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     #M = 0  # Index of word from BIP39
     seq = Sequencial(0)
     global seed_bytes
-    global found_flag
     lista = []
     lista = seq.get_next(int(M),int(N))
     X = 0
@@ -112,17 +94,9 @@ def get_mnemonic(M, N):
         data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
         time.sleep(0.5)  # Sleep for half a second
         print("CheckSum ", X)
-        #write_file(data,mnemonic)
         X += 1
 
-# Valida o mnemonic
-#if not Bip39MnemonicValidator(mnemonic).IsValid():
-#    print("Mnemonic inválido.")
-#    exit()
-
-
 def main():
-    global found_flag
     global seed_bytes
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
     contador = 0
