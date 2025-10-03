@@ -1,5 +1,5 @@
 # git clone https://github.com/stefanoesmeris/bitcoin-wallet-finder.git
-# pip install bip-utils requests pandas
+# pip install bip-utils requests pandas Mnemonic
 #
 # O que este script faz:
 # 
@@ -15,7 +15,7 @@
 import bip_utils
 import requests
 import pandas as pd
-import time, os
+import time, os, json
 from sequencial import Sequencial
 
 seed_bytes = ""
@@ -44,6 +44,7 @@ def has_activity(addr):
 
 # Função para derivar e verificar endereços
 def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
+    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
     wallet = derivation.FromSeed(seed_bytes, coin_type)
     results = []
     good_seed = False
@@ -55,9 +56,9 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
         if active:
             good_seed = True
             results.append({
-                "Tipo": label,
-                "Endereço": addr,
-                "Caminho": path,
+                "Type": label,
+                "Address": addr,
+                "Path": path,
                 "Status": status,
                 "Mnemonic": mnemonic  # ⚠️ Cuidado: incluir apenas se necessário
             })
@@ -71,6 +72,19 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
 def write_good_seed_to_file(data):
     df = pd.DataFrame(data)
     df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
+    if os.path.exists("dados.json"):
+        with open("dados.json", "r") as f:
+            try:
+                dados_existentes = json.load(f)
+            except json.JSONDecodeError:
+                dados_existentes = []
+    else:
+        dados_existentes = []
+    # Adiciona o novo dado à lista
+    dados_existentes.append(data)
+    # Salva de volta no arquivo
+    with open("dados.json", "w") as f:
+        json.dump(dados_existentes, f, indent=4)
     print("\n✅ Resultado exportado para 's_carteira_bitcoin_good.txt'")
 
 def get_mnemonic(M, N):
@@ -93,11 +107,11 @@ def get_mnemonic(M, N):
         time.sleep(0.5)  # Sleep for half a second
         data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
         time.sleep(0.5)  # Sleep for half a second
-        print("CheckSum ", X)
+        print("CheckSum ", X, "of ", len(lista)-1)
         X += 1
-
+#
 def main():
-    global seed_bytes
+    #global seed_bytes
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
     contador = 0
     # Nome do arquivo onde o contador será armazenado
@@ -122,14 +136,11 @@ def main():
                 f.write(str(contador))
             if contador > 2047:
                 break
-            if contador % 16 == 0:
-                time.sleep(5)  # Sleep for 5 seconds
+            print("sleep for 3 seconds")
+            time.sleep(3)  # Sleep for 3 seconds
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
-
+#
 if __name__ == "__main__":
 
     main()
-
-
-
