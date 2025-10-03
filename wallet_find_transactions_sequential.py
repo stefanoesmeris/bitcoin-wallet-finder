@@ -1,5 +1,6 @@
+# git clone https://github.com/stefanoesmeris/bitcoin-wallet-finder.git
+# pip install bip-utils requests pandas
 #
-#pip install bip-utils requests pandas
 # O que este script faz:
 # 
 # 	Importa as palavras sementes
@@ -130,4 +131,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
