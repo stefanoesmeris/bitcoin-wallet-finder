@@ -63,6 +63,7 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
                 "Mnemonic": mnemonic  # ⚠️ Cuidado: incluir apenas se necessário
             })
             print("Found a good seed")
+            break
     if good_seed:    
         write_good_seed_to_file(results)
         print(type(results),"\n")
@@ -147,3 +148,4 @@ def main():
 if __name__ == "__main__":
 
     main()
+
