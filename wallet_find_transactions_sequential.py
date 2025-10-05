@@ -118,6 +118,8 @@ def main():
     #global seed_bytes
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
     contador = 0
+    #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
+    N = 12
     # Nome do arquivo onde o contador será armazenado
     arquivo = "contador.txt"
     # Verifica se o arquivo existe
@@ -134,7 +136,7 @@ def main():
         while True:
             #
             print("Contador :", contador)
-            get_mnemonic(int(contador), int(12))
+            get_mnemonic(int(contador), int(N))
             contador += 1
             with open(arquivo, "w") as f:
                 f.write(str(contador))
@@ -148,4 +150,5 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
