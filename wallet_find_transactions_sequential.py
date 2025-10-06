@@ -113,6 +113,9 @@ def get_mnemonic(M, N):
         print("Looking BIP84 SegWit\n")
         time.sleep(0.5)  # Sleep for half a second
         X += 1
+        if X % 15 == 0:
+            print("sleep for 15 seconds - because no one is made of iron")
+            time.sleep(15)  # Sleep for 15 seconds
 #
 def main():
     #global seed_bytes
