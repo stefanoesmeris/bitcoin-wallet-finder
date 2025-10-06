@@ -14,16 +14,10 @@
 # 	Palavras sementes (opcional — cuidado com segurança!)
 import bip_utils
 import requests
-import pandas as pd
+#import pandas as pd
 import time, os, json
 from sequencial import Sequencial
 
-#seed_bytes = ""
-
-# Palavras sementes (substitua pelas suas)
-#mnemonic = ""
-#mnemonic = "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about"
-#mnemonic = "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"
 
 from bip_utils import (
     Bip39SeedGenerator, Bip39MnemonicValidator, Bip39MnemonicGenerator,
@@ -63,7 +57,7 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
                 "Mnemonic": mnemonic  # ⚠️ Cuidado: incluir apenas se necessário
             })
             print("Found a good seed")
-            break
+            break # Basta encontrar um unico endereço que ja e suficiente!  Just finding a single address is enough!
     if good_seed:    
         write_good_seed_to_file(results)
         print(type(results),"\n")
@@ -71,8 +65,8 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
     return results
 
 def write_good_seed_to_file(data):
-    df = pd.DataFrame(data)
-    df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
+    #df = pd.DataFrame(data)
+    #df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
     if os.path.exists("dados.json"):
         with open("dados.json", "r") as f:
             try:
@@ -86,22 +80,20 @@ def write_good_seed_to_file(data):
     # Salva de volta no arquivo
     with open("dados.json", "w") as f:
         json.dump(dados_existentes, f, indent=4)
-    print("\n✅ Resultado exportado para 's_carteira_bitcoin_good.txt'")
+    print("\n✅ Resultado exportado para 'dados.json'")
 
 def get_mnemonic(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     #M = 0  # Index of word from BIP39
     seq = Sequencial(0)
-    #global seed_bytes
     lista = []
-    lista = seq.get_next(int(M),int(N))
+    lista = seq.get_next(int(M),int(N)) # Busca uma lista de mnemonic para ser avaliada.
     X = 0
     for phrase in lista:
         mnemonic = str(phrase)
-        #print(mnemonic)
         #mnemonic = "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"
-        #seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
         data = []
+        inicio = time.time()
         print("CheckSum ", X, "of ", len(lista)-1, "Seed ", mnemonic)
         data = check_addresses(Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
         print("Looking BIP44 Legacy\n")
@@ -112,16 +104,18 @@ def get_mnemonic(M, N):
         data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
         print("Looking BIP84 SegWit\n")
         time.sleep(0.5)  # Sleep for half a second
+        fim = time.time()
+        tempo_total = fim - inicio
+        print(f"A tarefa levou {tempo_total:.4f} segundos para ser concluída.\n")
         X += 1
         if X % 15 == 0:
             print("sleep for 15 seconds - because no one is made of iron")
             time.sleep(15)  # Sleep for 15 seconds
 #
 def main():
-    #global seed_bytes
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
     contador = 0
-    #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
+    # N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     N = 12
     # Nome do arquivo onde o contador será armazenado
     arquivo = "contador.txt"
