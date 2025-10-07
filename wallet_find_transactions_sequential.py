@@ -14,8 +14,7 @@
 # 	Palavras sementes (opcional — cuidado com segurança!)
 import bip_utils
 import requests
-#import pandas as pd
-import time, os, json
+import time, os, json, argparse
 from sequencial import Sequencial
 
 
@@ -25,6 +24,27 @@ from bip_utils import (
     Bip44Coins, Bip49Coins, Bip84Coins,
     Bip44Changes, Bip39WordsNum
 )
+
+SETUP_FILE = 'setup.json'
+DEFAULT_N = 12
+DEFAULT_CONTADOR = 0
+
+
+def manipular_configuracao(acao, novos_valores=None):
+    if acao == 'ler':
+        if os.path.exists(SETUP_FILE):
+            with open(SETUP_FILE, 'r') as f:
+                return json.load(f)
+        else:
+            return None
+
+    elif acao == 'atualizar' and novos_valores:
+        with open(SETUP_FILE, 'w') as f:
+            json.dump(novos_valores, f, indent=4)
+
+
+
+
 
 # Consulta histórico de transações via Blockstream API
 def has_activity(addr):
@@ -65,8 +85,6 @@ def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
     return results
 
 def write_good_seed_to_file(data):
-    #df = pd.DataFrame(data)
-    #df.to_csv("s_carteira_bitcoin_good.txt", mode='a', index=False)
     if os.path.exists("dados.json"):
         with open("dados.json", "r") as f:
             try:
@@ -114,29 +132,35 @@ def get_mnemonic(M, N):
 #
 def main():
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
-    contador = 0
     # N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
-    N = 12
-    # Nome do arquivo onde o contador será armazenado
-    arquivo = "contador.txt"
-    # Verifica se o arquivo existe
-    if os.path.exists(arquivo):
-        with open(arquivo, "r") as f:
-            try:
-                contador = int(f.read())
-            except ValueError:
-                contador = 0 # Se nao for valido
+    #
+    parser = argparse.ArgumentParser(description="Script com configuração persistente")
+    parser.add_argument('--N', type=int, help="Valor inicial para N (prioridade máxima)")
+    args = parser.parse_args()
+    config = manipular_configuracao('ler')
+    #
+    # 🧠 Determina valor de N com base na prioridade
+    if args.N is not None:
+        N = args.N
+    elif config and 'N' in config:
+        N = config['N']
     else:
-        with open(arquivo, "w") as f:
-            f.write(str(contador))
+        N = DEFAULT_N
+
+    # 🧱 Inicializa contador
+    contador = config['contador'] if config and 'contador' in config else DEFAULT_CONTADOR
+    
+    # 💾 Atualiza ou cria o arquivo com os valores iniciais
+    
+    manipular_configuracao('atualizar', {'contador': contador, 'N': N})
+
     try:
         while True:
             #
             print("Contador :", contador)
             get_mnemonic(int(contador), int(N))
             contador += 1
-            with open(arquivo, "w") as f:
-                f.write(str(contador))
+            manipular_configuracao('atualizar', {'contador': contador, 'N': N})
             if contador > 2047:
                 break
             print("sleep for 30 seconds - because no one is made of iron")
