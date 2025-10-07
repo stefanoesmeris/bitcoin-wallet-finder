@@ -1,5 +1,5 @@
 # git clone https://github.com/stefanoesmeris/bitcoin-wallet-finder.git
-# pip install bip-utils requests pandas Mnemonic
+# pip install bip-utils requests Mnemonic
 #
 # O que este script faz:
 # 
@@ -171,5 +171,6 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
