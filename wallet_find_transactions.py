@@ -26,7 +26,7 @@ from bip_utils import (
 )
 
 SETUP_FILE = 'setup.json'
-DEFAULT_N = 12 # N = 12 - Define o número de palavras da seed (12, 15, 18, 21 ou 24)
+DEFAULT_N = 12 # N = 12 - Define o número de palavras da seed (12, 15, 18, 21 ou 24) ou 0(zero) para aleatorio
 DEFAULT_CONTADOR = 0
 
 
@@ -75,7 +75,7 @@ def get_mnemonic_rand():
     mnemonic = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
     print(f"Mnemonic string: {mnemonic}")
     # Gera a seed
-    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+    #seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
     # Executa para os três padrões
     data = []
     inicio = time.time()
@@ -120,15 +120,15 @@ def main():
     try:
         while True:
             #
-            print("Contador :", contador)
             if N > 0:
+                print("Contador :", contador)
                 W = 30
                 get_mnemonic_seq(int(contador), int(N))
+                contador += 1
+                manipular_configuracao('atualizar', {'contador': contador, 'N': N})
             else:
                 W = 5
                 get_mnemonic_rand()
-            contador += 1
-            manipular_configuracao('atualizar', {'contador': contador, 'N': N})
             if contador > 2047:
                 manipular_configuracao('atualizar', {'contador': 0, 'N': N})
                 break
