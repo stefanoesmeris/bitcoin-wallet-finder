@@ -12,7 +12,7 @@
 # 	Tipo (BIP44, BIP49, BIP84)
 # 	Status de movimentação
 # 	Palavras sementes (opcional — cuidado com segurança!)
-import bip_utils
+#import bip_utils
 import requests
 import time, os, json, argparse
 from general_functions import General_Functions as GF
@@ -41,7 +41,7 @@ def manipular_configuracao(acao, novos_valores=None):
         with open(SETUP_FILE, 'w') as f:
             json.dump(novos_valores, f, indent=4)
 
-def get_mnemonic(M, N):
+def get_mnemonic_seq(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     #M = 0  # Index of word from BIP39
     seq = GF(0)
@@ -71,6 +71,28 @@ def get_mnemonic(M, N):
             print("sleep for 15 seconds - because no one is made of iron")
             time.sleep(15)  # Sleep for 15 seconds
 #
+def get_mnemonic_rand():
+    mnemonic = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
+    print(f"Mnemonic string: {mnemonic}")
+    # Gera a seed
+    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+    # Executa para os três padrões
+    data = []
+    inicio = time.time()
+    data = GF.check_addresses(GF, Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
+    print("Looking BIP44 Legacy\n")
+    time.sleep(0.5)  # Sleep for half a second
+    data = GF.check_addresses(GF, Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic)
+    print("Looking BIP49 P2SH\n")
+    time.sleep(0.5)  # Sleep for half a second
+    data = GF.check_addresses(GF, Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
+    print("Looking BIP84 SegWit\n")
+    time.sleep(0.5)  # Sleep for half a second
+    fim = time.time()
+    tempo_total = fim - inicio
+    print(f"A tarefa levou {tempo_total:.4f} segundos para ser concluída.\n")
+    
+#    
 def main():
     print("🔁 Starting main loop. Press Ctrl+C to stop.")
     # N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
@@ -99,18 +121,24 @@ def main():
         while True:
             #
             print("Contador :", contador)
-            get_mnemonic(int(contador), int(N))
+            if N > 0:
+                W = 30
+                get_mnemonic_seq(int(contador), int(N))
+            else:
+                W = 5
+                get_mnemonic_rand()
             contador += 1
             manipular_configuracao('atualizar', {'contador': contador, 'N': N})
             if contador > 2047:
+                manipular_configuracao('atualizar', {'contador': 0, 'N': N})
                 break
-            print("sleep for 30 seconds - because no one is made of iron")
-            time.sleep(30)  # Sleep for 30 seconds
+            print("sleep for ", W, " seconds - because no one is made of iron")
+            time.sleep(W)  # Sleep for 30 seconds
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
 #
 if __name__ == "__main__":
-
+    # Call the main function  and start aplication
     main()
 
 
