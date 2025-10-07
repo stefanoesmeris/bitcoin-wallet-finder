@@ -26,7 +26,7 @@ from bip_utils import (
 )
 
 SETUP_FILE = 'setup.json'
-DEFAULT_N = 12
+DEFAULT_N = 12 #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
 DEFAULT_CONTADOR = 0
 
 
@@ -171,6 +171,7 @@ def main():
 if __name__ == "__main__":
 
     main()
+
 
 
 
