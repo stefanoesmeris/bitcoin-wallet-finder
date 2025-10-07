@@ -26,7 +26,7 @@ from bip_utils import (
 )
 
 SETUP_FILE = 'setup.json'
-DEFAULT_N = 12 #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
+DEFAULT_N = 12 # N = 12 - Define o número de palavras da seed (12, 15, 18, 21 ou 24)
 DEFAULT_CONTADOR = 0
 
 
@@ -42,19 +42,29 @@ def manipular_configuracao(acao, novos_valores=None):
         with open(SETUP_FILE, 'w') as f:
             json.dump(novos_valores, f, indent=4)
 
-
-
-
-
 # Consulta histórico de transações via Blockstream API
-def has_activity(addr):
+def has_activity(addr, max_retries=3, timeout=5):
     url = f"https://blockstream.info/api/address/{addr}/txs"
-    response = requests.get(url)
-    if response.status_code == 200:
-        txs = response.json()
-        return len(txs) > 0
-    else:
-        return False
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, timeout=timeout)
+            if response.status_code == 200:
+                txs = response.json()
+                # Verifica se é uma lista e se contém dados
+                if isinstance(txs, list) and txs:
+                    return True
+                else:
+                    # Dados vazios ou não listados
+                    return False
+            else:
+                print(f"[Tentativa {attempt+1}] Código de status inesperado: {response.status_code}")
+        except requests.exceptions.RequestException as e:
+            print(f"[Tentativa {attempt+1}] Erro de conexão: {e}")
+            time.sleep(2 ** attempt)  # Backoff exponencial
+
+    # Se todas as tentativas falharem
+    print("Falha ao consultar a API após múltiplas tentativas.")
+    return False
 
 # Função para derivar e verificar endereços
 def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
@@ -171,7 +181,5 @@ def main():
 if __name__ == "__main__":
 
     main()
-
-
 
 
