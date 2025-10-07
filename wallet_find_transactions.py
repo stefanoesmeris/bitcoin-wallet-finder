@@ -41,43 +41,12 @@ def manipular_configuracao(acao, novos_valores=None):
         with open(SETUP_FILE, 'w') as f:
             json.dump(novos_valores, f, indent=4)
 
-
-# Função para derivar e verificar endereços
-def check_addresses(derivation, coin_type, label, bip_number, mnemonic):
-    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
-    wallet = derivation.FromSeed(seed_bytes, coin_type)
-    results = []
-    good_seed = False
-    for i in range(5):  # Varrer os primeiros 5 endereços externos
-        path = f"m/{bip_number}'/0'/0'/0/{i}"
-        addr = wallet.Purpose().Coin().Account(0).Change(Bip44Changes.CHAIN_EXT).AddressIndex(i).PublicKey().ToAddress()
-        active = GF.has_activity(addr)
-        status = "Movimentado" if active else "unused"
-        if active:
-            good_seed = True
-            results.append({
-                "Type": label,
-                "Address": addr,
-                "Path": path,
-                "Status": status,
-                "Mnemonic": mnemonic  # ⚠️ Cuidado: incluir apenas se necessário
-            })
-            print("Found a good seed")
-            break # Basta encontrar um unico endereço que ja e suficiente!  Just finding a single address is enough!
-    if good_seed:    
-        GF.write_good_seed_to_file(results, "dados.json")
-        print(type(results),"\n")
-        print(results)
-    return results
-
-
-
 def get_mnemonic(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     #M = 0  # Index of word from BIP39
     seq = GF(0)
     lista = []
-    lista = seq.get_next(int(M),int(N)) # Busca uma lista de mnemonic para ser avaliada.
+    lista = GF.get_next(GF, int(M),int(N)) # Busca uma lista de mnemonic para ser avaliada.
     X = 0
     for phrase in lista:
         mnemonic = str(phrase)
@@ -85,13 +54,13 @@ def get_mnemonic(M, N):
         data = []
         inicio = time.time()
         print("CheckSum ", X, "of ", len(lista)-1, "Seed ", mnemonic)
-        data = check_addresses(Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
+        data = GF.check_addresses(GF, Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic)
         print("Looking BIP44 Legacy\n")
         time.sleep(0.5)  # Sleep for half a second
-        data = check_addresses(Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic)
+        data = GF.check_addresses(GF, Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic)
         print("Looking BIP49 P2SH\n")
         time.sleep(0.5)  # Sleep for half a second
-        data = check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
+        data = GF.check_addresses(GF, Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic)
         print("Looking BIP84 SegWit\n")
         time.sleep(0.5)  # Sleep for half a second
         fim = time.time()
