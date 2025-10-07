@@ -79,19 +79,20 @@ class General_Functions:
             url = f"https://blockstream.info/liquid/api/address/{addr}"
         else:
             return 0
-        try:
-            r = requests.get(url, timeout=timeout)
-            if r.status_code == 200:
-                dados = r.json()
-                funded = dados.get("chain_stats", {}).get("funded_txo_sum", 0)
-                spent = dados.get("chain_stats", {}).get("spent_txo_sum", 0)
-                return (funded - spent) / 1e8
-            else:
-                print(f"[Tentativa {attempt+1}] Código de status inesperado: {response.status_code}")    
-        except requests.exceptions.RequestException as e:
-            print(f"[Tentativa {attempt+1}] Erro de conexão: {e}")
-            time.sleep(2 ** attempt)  # Backoff exponencial
-            #pass
+        for attempt in range(max_retries):
+            try:
+                r = requests.get(url, timeout=timeout)
+                if r.status_code == 200:
+                    dados = r.json()
+                    funded = dados.get("chain_stats", {}).get("funded_txo_sum", 0)
+                    spent = dados.get("chain_stats", {}).get("spent_txo_sum", 0)
+                    return (funded - spent) / 1e8
+                else:
+                    print(f"[Tentativa {attempt+1}] Código de status inesperado: {response.status_code}")    
+            except requests.exceptions.RequestException as e:
+                print(f"[Tentativa {attempt+1}] Erro de conexão: {e}")
+                time.sleep(2 ** attempt)  # Backoff exponencial
+                #pass
         return 0
     #
     def write_good_seed_to_file(self, data, filename):

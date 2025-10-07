@@ -1,5 +1,6 @@
 import json
 import requests
+from general_functions import General_Functions as GF
 
 from bip_utils import (
     Bip39SeedGenerator, Bip39MnemonicValidator,
@@ -63,27 +64,6 @@ def derivar_enderecos_liquid(mnemonic):
 #    except Bip44DepthError:
 #        return []
 
-
-
-def saldo_blockstream(endereco, rede="btc"):
-    if rede == "btc":
-        url = f"https://blockstream.info/api/address/{endereco}"
-    elif rede == "liquid":
-        url = f"https://blockstream.info/liquid/api/address/{endereco}"
-    else:
-        return 0
-
-    try:
-        r = requests.get(url)
-        if r.status_code == 200:
-            dados = r.json()
-            funded = dados.get("chain_stats", {}).get("funded_txo_sum", 0)
-            spent = dados.get("chain_stats", {}).get("spent_txo_sum", 0)
-            return (funded - spent) / 1e8
-    except:
-        pass
-    return 0
-
 # === Ler arquivo JSON ===
 with open("dados.json", "r") as f:
     dados = json.load(f)
@@ -95,9 +75,9 @@ for grupo in dados:
         mnemonic = item["Mnemonic"]
 
         enderecos = derivar_enderecos(mnemonic, tipo)
-        saldo_total_btc = sum(saldo_blockstream(addr, "btc") for addr in enderecos)
+        saldo_total_btc = sum(GF.saldo_blockstream(GF, addr, "btc") for addr in enderecos)
         #enderecos = derivar_enderecos_liquid(mnemonic)
-        #saldo_total_liq = sum(saldo_blockstream(addr, "liquid") for addr in enderecos)
+        #saldo_total_liq = sum(GF.saldo_blockstream(GF, addr, "liquid") for addr in enderecos)
 
         print(f"\n🔐 Tipo: {tipo}")
         #print(f"📜 Mnemonic: {mnemonic[:-30]}...")  # mostra só o início por segurança
