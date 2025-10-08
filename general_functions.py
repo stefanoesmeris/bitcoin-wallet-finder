@@ -63,6 +63,9 @@ class General_Functions:
                     else:
                         # Dados vazios ou não listados
                         return False
+                elif response.status_code == 429:
+                    print(f"[Tentativa {attempt+1}] - Codigo 429  servidor recusando - aguardar {(attempt+1) *5} minutos {datetime.now()}")
+                    time.sleep(300  * (attempt + 1))
                 else:
                     print(f"[Tentativa {attempt+1}] Código de status inesperado: {response.status_code}")
             except requests.exceptions.RequestException as e:
@@ -137,3 +140,4 @@ class General_Functions:
             self.write_good_seed_to_file(self, results, "dados.json")
             #print(results)
         return results
+
