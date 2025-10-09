@@ -117,11 +117,12 @@ class General_Functions:
     #
     # Função para derivar e verificar endereços
     def check_addresses(self, derivation, coin_type, label, bip_number, mnemonic):
+        D = 3 # Deriva os x primeiros endereços da carteira.
         seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
         wallet = derivation.FromSeed(seed_bytes, coin_type)
         results = []
         good_seed = False
-        for i in range(5):  # Varrer os primeiros 5 endereços externos
+        for i in range(D):  # Varrer os primeiros D endereços externos
             path = f"m/{bip_number}'/0'/0'/0/{i}"
             addr = wallet.Purpose().Coin().Account(0).Change(Bip44Changes.CHAIN_EXT).AddressIndex(i).PublicKey().ToAddress()
             active = self.has_activity(self, addr)
@@ -141,5 +142,4 @@ class General_Functions:
             self.write_good_seed_to_file(self, results, "dados.json")
             #print(results)
         return results
-
 

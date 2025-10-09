@@ -47,10 +47,9 @@ def get_mnemonic_seq(M, N):
     seq = GF(0)
     lista = []
     lista = GF.get_next(GF, int(M),int(N)) # Busca uma lista de mnemonic para ser avaliada.
-    X = 0
+    #X = 0
     for phrase in lista:
         mnemonic = str(phrase)
-        #mnemonic = "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo wrong"
         data = []
         inicio = time.time()
         print("CheckSum ", X, "of ", len(lista)-1, "Seed ", mnemonic)
@@ -66,10 +65,10 @@ def get_mnemonic_seq(M, N):
         fim = time.time()
         tempo_total = fim - inicio
         print(f"A tarefa levou {tempo_total:.4f} segundos para ser concluída.\n")
-        X += 1
-        if X % 15 == 0:
-            print("sleep for 15 seconds - because no one is made of iron")
-            time.sleep(15)  # Sleep for 15 seconds
+        #X += 1
+        #if X % 15 == 0:
+        #    print("sleep for 15 seconds - because no one is made of iron")
+        #    time.sleep(15)  # Sleep for 15 seconds
 #
 def get_mnemonic_rand():
     mnemonic = Bip39MnemonicGenerator().FromWordsNumber(Bip39WordsNum.WORDS_NUM_12)
@@ -132,8 +131,8 @@ def main():
             if contador > 2047:
                 manipular_configuracao('atualizar', {'contador': 0, 'N': N})
                 break
-            print("sleep for ", W, " seconds - because no one is made of iron")
-            time.sleep(W)  # Sleep for 30 seconds
+            #print("sleep for ", W, " seconds - because no one is made of iron")
+            #time.sleep(W)  # Sleep for 30 seconds
     except KeyboardInterrupt:
         print("\n🛑 Loop stopped by user.")
 #
