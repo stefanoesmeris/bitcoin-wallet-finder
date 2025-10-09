@@ -3,6 +3,7 @@ from mnemonic import Mnemonic
 import bip_utils
 import requests
 import time, os, json, argparse
+from datetime import datetime
 
 from bip_utils import (
     Bip39SeedGenerator, Bip39MnemonicValidator, Bip39MnemonicGenerator,
@@ -140,4 +141,5 @@ class General_Functions:
             self.write_good_seed_to_file(self, results, "dados.json")
             #print(results)
         return results
+
 
