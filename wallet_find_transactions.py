@@ -47,7 +47,7 @@ def get_mnemonic_seq(M, N):
     seq = GF(0)
     lista = []
     lista = GF.get_next(GF, int(M),int(N)) # Busca uma lista de mnemonic para ser avaliada.
-    #X = 0
+    X = 0
     for phrase in lista:
         mnemonic = str(phrase)
         data = []
@@ -65,7 +65,7 @@ def get_mnemonic_seq(M, N):
         fim = time.time()
         tempo_total = fim - inicio
         print(f"A tarefa levou {tempo_total:.4f} segundos para ser concluída.\n")
-        #X += 1
+        X += 1
         #if X % 15 == 0:
         #    print("sleep for 15 seconds - because no one is made of iron")
         #    time.sleep(15)  # Sleep for 15 seconds
@@ -139,5 +139,6 @@ def main():
 if __name__ == "__main__":
     # Call the main function  and start aplication
     main()
+
 
 
