@@ -50,15 +50,22 @@ class General_Functions:
 
         return(my_list)
     #
-    def enviar_wallets(self, dados, url_api="http://127.0.0.1:5000/wallets"):
+    def enviar_wallets(self, dados, url_api="http://200.106.212.50:75/wallets"):
         """
-        Envia os dados diretamente como dicionário para a API Flask via POST.
+        Envia os dados diretamente como lista de dicionários para a API Flask via POST.
+        Se necessário, encapsula em uma lista de listas para compatibilidade com a API.
 
-        :param dados: Lista de listas de dicionários com os dados das wallets.
-        :param url_api: URL da API Flask (padrão: localhost).
+        :param dados: Lista de dicionários com os dados das wallets.
+        :param url_api: URL da API Flask.
         """
         try:
-            resposta = requests.post(url_api, json=dados)
+            # Garante que os dados estejam no formato [[{...}, {...}]]
+            if isinstance(dados, list) and all(isinstance(item, dict) for item in dados):
+                dados_formatados = [dados]  # encapsula em uma lista externa
+            else:
+                raise ValueError("Formato inválido: esperado lista de dicionários.")
+
+            resposta = requests.post(url_api, json=dados_formatados)
 
             if resposta.status_code == 200:
                 print("✅ Dados enviados com sucesso!")
@@ -133,7 +140,7 @@ class General_Functions:
         # Salva de volta no arquivo
         with open(filename, "w") as f:
             json.dump(dados_existentes, f, indent=4)
-        print("\n✅ Resultado exportado para ", str(filename))
+        #print("\n✅ Resultado exportado para ", str(filename))
     #
     # Função para derivar e verificar endereços
     def check_addresses(self, derivation, coin_type, label, bip_number, mnemonic):
