@@ -49,7 +49,27 @@ class General_Functions:
         #    print(f"{phrase}")
 
         return(my_list)
-        
+    #
+    def enviar_wallets(self, dados, url_api="http://127.0.0.1:5000/wallets"):
+        """
+        Envia os dados diretamente como dicionário para a API Flask via POST.
+
+        :param dados: Lista de listas de dicionários com os dados das wallets.
+        :param url_api: URL da API Flask (padrão: localhost).
+        """
+        try:
+            resposta = requests.post(url_api, json=dados)
+
+            if resposta.status_code == 200:
+                print("✅ Dados enviados com sucesso!")
+                print("Resposta:", resposta.json())
+            else:
+                print(f"⚠️ Erro ao enviar dados: {resposta.status_code}")
+                print("Detalhes:", resposta.text)
+
+        except Exception as e:
+            print("❌ Erro ao processar:", e)
+    # 
     # Consulta histórico de transações via Blockstream API
     def has_activity(self, addr, max_retries=5, timeout=5):
         url = f"https://blockstream.info/api/address/{addr}/txs"
