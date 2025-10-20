@@ -26,7 +26,7 @@ from bip_utils import (
 )
 
 SETUP_FILE = 'setup.json'
-DEFAULT_N = 12 # N = 12 - Define o número de palavras da seed (12, 15, 18, 21 ou 24) ou 0(zero) para aleatorio
+DEFAULT_N = 0 # N = 12 - Define o número de palavras da seed (12, 15, 18, 21 ou 24) ou 0(zero) para aleatorio
 DEFAULT_U = "http://127.0.0.1:8080/api"
 DEFAULT_CONTADOR = 0
 
@@ -151,6 +151,7 @@ def main():
 if __name__ == "__main__":
     # Call the main function  and start aplication
     main()
+
 
 
 
