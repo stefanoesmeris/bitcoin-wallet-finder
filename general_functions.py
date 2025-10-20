@@ -13,9 +13,10 @@ from bip_utils import (
 )
 
 class General_Functions:
-    def __init__(self, INDEX=0):
+    def __init__(self):
         self.N = 12
         self.M = 0
+        self.U = "http://127.0.0.1:5000/api"
         
     def get_next(self, M, N):
         # Inicializa o gerador BIP39 em inglês
@@ -50,7 +51,7 @@ class General_Functions:
 
         return(my_list)
     #
-    def enviar_wallets(self, dados, url_api="http://200.106.212.50:75/wallets"):
+    def enviar_wallets(self, dados):
         """
         Envia os dados diretamente como lista de dicionários para a API Flask via POST.
         Se necessário, encapsula em uma lista de listas para compatibilidade com a API.
@@ -64,8 +65,8 @@ class General_Functions:
                 dados_formatados = [dados]  # encapsula em uma lista externa
             else:
                 raise ValueError("Formato inválido: esperado lista de dicionários.")
-
-            resposta = requests.post(url_api, json=dados_formatados)
+            
+            resposta = requests.post(self.U, json=dados_formatados)
 
             if resposta.status_code == 200:
                 print("✅ Dados enviados com sucesso!")

@@ -27,6 +27,7 @@ from bip_utils import (
 
 SETUP_FILE = 'setup.json'
 DEFAULT_N = 12 # N = 12 - Define o número de palavras da seed (12, 15, 18, 21 ou 24) ou 0(zero) para aleatorio
+DEFAULT_U = "http://127.0.0.1:8080/api"
 DEFAULT_CONTADOR = 0
 
 
@@ -44,7 +45,7 @@ def manipular_configuracao(acao, novos_valores=None):
 def get_mnemonic_seq(M, N):
     #N = 12 # Define o número de palavras da seed (12, 15, 18, 21 ou 24)
     #M = 0  # Index of word from BIP39
-    seq = GF(0)
+    #seq = GF(0)
     lista = []
     lista = GF.get_next(GF, int(M),int(N)) # Busca uma lista de mnemonic para ser avaliada.
     X = 0
@@ -98,6 +99,7 @@ def main():
     #
     parser = argparse.ArgumentParser(description="Script com configuração persistente")
     parser.add_argument('--N', type=int, help="Valor inicial para N (prioridade máxima)")
+    parser.add_argument('--U', type=str, help="Valor inicial para URL (prioridade máxima)")
     args = parser.parse_args()
     config = manipular_configuracao('ler')
     #
@@ -109,12 +111,22 @@ def main():
     else:
         N = DEFAULT_N
 
+    # 🧠 Determina valor de U com base na prioridade
+    if args.U is not None:
+        U = args.U
+    elif config and 'U' in config:
+        U = config['U']
+    else:
+        U = DEFAULT_U
+        
     # 🧱 Inicializa contador
     contador = config['contador'] if config and 'contador' in config else DEFAULT_CONTADOR
     
+    GF.U = U 
+    
     # 💾 Atualiza ou cria o arquivo com os valores iniciais
     
-    manipular_configuracao('atualizar', {'contador': contador, 'N': N})
+    manipular_configuracao('atualizar', {'contador': contador, 'N': N, 'U': U})
 
     try:
         while True:
