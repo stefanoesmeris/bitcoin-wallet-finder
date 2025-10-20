@@ -120,7 +120,8 @@ class General_Functions:
                     spent = dados.get("chain_stats", {}).get("spent_txo_sum", 0)
                     return (funded - spent) / 1e8
                 else:
-                    print(f"[Tentativa {attempt+1}] Código de status inesperado: {r.status_code}")    
+                    print(f"[Tentativa {attempt+1}] Código de status inesperado: {r.status_code}") 
+                    time.sleep(60  * (attempt + 1))
             except requests.exceptions.RequestException as e:
                 print(f"[Tentativa {attempt+1}] Erro de conexão: {e}")
                 time.sleep(2 ** attempt)  # Backoff exponencial
@@ -171,6 +172,7 @@ class General_Functions:
             self.enviar_wallets(self, results) # grava os dados numa API
             #print(results)
         return results
+
 
 
 
