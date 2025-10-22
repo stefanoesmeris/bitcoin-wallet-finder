@@ -66,6 +66,17 @@ class General_Functions:
         # Se todas as tentativas falharem
         print("Falha ao consultar a API após múltiplas tentativas.")
         return False
+
+    def manipular_configuracao(self, acao, novos_valores=None):
+        if acao == 'ler':
+            if os.path.exists(SETUP_FILE):
+                with open(SETUP_FILE, 'r') as f:
+                    return json.load(f)
+            else:
+                return None
+        elif acao == 'atualizar' and novos_valores:
+            with open(SETUP_FILE, 'w') as f:
+                json.dump(novos_valores, f, indent=4)
         
     def enviar_wallets(self, dados):
         """
