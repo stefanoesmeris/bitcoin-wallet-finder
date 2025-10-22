@@ -48,7 +48,14 @@ def derivar_enderecos_liquid(mnemonic):
 
     return enderecos
 
-
+def consultar_wallets(url_api="http://127.0.0.1:5000/wallets"):
+    resposta = requests.get(url_api)
+    if resposta.status_code == 200:
+        return resposta.json()
+    else:
+        print("Erro ao consultar:", resposta.status_code)
+        return []
+        
 #def derivar_enderecos_liquid(mnemonic):
     #if not Bip39MnemonicValidator(mnemonic).IsValid():
     #    return []
@@ -90,4 +97,5 @@ for grupo in dados:
         #    print(f"  ✅ Saldo total Liquid:   {saldo_total_liq:.8f} L-BTC")
         #else:          
         #    print(f"   ➤ Saldo total Liquid:   {saldo_total_liq:.8f} L-BTC")
+
 #
