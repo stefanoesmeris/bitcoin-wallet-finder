@@ -55,31 +55,11 @@ def consultar_wallets(url_api="http://127.0.0.1:5000/wallets"):
     else:
         print("Erro ao consultar:", resposta.status_code)
         return []
-        
-#def derivar_enderecos_liquid(mnemonic):
-    #if not Bip39MnemonicValidator(mnemonic).IsValid():
-    #    return []
 
-#    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
-    # Derivação manual: m/44'/1776'/0'/0/i
-#    base_path = "m/44'/1776'/0'/0"
-#    bip = Bip44.FromSeedAndPath(seed_bytes, base_path)
-#
-#    try:
-#        carteira = bip.Account(0).Change(Bip44Changes.CHAIN_EXT)
-#        return [carteira.AddressIndex(i).PublicKey().ToAddress() for i in range(20)]
-#    except Bip44DepthError:
-#        return []
-
-# === Ler arquivo JSON ===
-#with open("dados.json", "r") as f:
-#    dados = json.load(f)
-dados = consultar_wallets()
-
-print("Verificando ",len(dados)," Carteiras")
 
 # === Processar cada carteira individualmente ===
-for item in dados:
+def check_wallet(dados):
+    for item in dados:
         tipo = item["Type"]
         mnemonic = item["Mnemonic"]
 
@@ -100,5 +80,34 @@ for item in dados:
         #else:          
         #    print(f"   ➤ Saldo total Liquid:   {saldo_total_liq:.8f} L-BTC")
 
+#        
+#def derivar_enderecos_liquid(mnemonic):
+    #if not Bip39MnemonicValidator(mnemonic).IsValid():
+    #    return []
+
+#    seed_bytes = Bip39SeedGenerator(mnemonic).Generate()
+    # Derivação manual: m/44'/1776'/0'/0/i
+#    base_path = "m/44'/1776'/0'/0"
+#    bip = Bip44.FromSeedAndPath(seed_bytes, base_path)
 #
+#    try:
+#        carteira = bip.Account(0).Change(Bip44Changes.CHAIN_EXT)
+#        return [carteira.AddressIndex(i).PublicKey().ToAddress() for i in range(20)]
+#    except Bip44DepthError:
+#        return []
+
+
+
+
+
+# === Ler arquivo JSON ===
+#with open("dados.json", "r") as f:
+#    dados = json.load(f)
+
+
+dados = consultar_wallets()
+
+print("Verificando ",len(dados)," Carteiras")
+
+check_wallet(dados)
 
