@@ -51,6 +51,22 @@ class General_Functions:
 
         return(my_list)
     #
+    def consultar_wallets(self):
+        # Carrega da API uma lista de wallets descobertas.
+        try:
+            resposta = requests.get(self.U)
+            if resposta.status_code == 200:
+                return resposta.json()
+            else:
+                print("Erro ao consultar:", resposta.status_code)
+                return []
+        except requests.exceptions.RequestException as e:
+            print(f"[Tentativa {attempt+1}] Erro de conexão: {e}")
+            time.sleep(2 ** attempt)  # Backoff exponencial
+        # Se todas as tentativas falharem
+        print("Falha ao consultar a API após múltiplas tentativas.")
+        return False
+        
     def enviar_wallets(self, dados):
         """
         Envia os dados diretamente como lista de dicionários para a API Flask via POST.
