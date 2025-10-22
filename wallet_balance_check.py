@@ -48,7 +48,7 @@ def derivar_enderecos_liquid(mnemonic):
 
     return enderecos
 
-def consultar_wallets(url_api="http://127.0.0.1:5000/wallets"):
+def consultar_wallets(url_api="http://127.0.0.1:75/wallets"):
     resposta = requests.get(url_api)
     if resposta.status_code == 200:
         return resposta.json()
@@ -72,12 +72,14 @@ def consultar_wallets(url_api="http://127.0.0.1:5000/wallets"):
 #        return []
 
 # === Ler arquivo JSON ===
-with open("dados.json", "r") as f:
-    dados = json.load(f)
+#with open("dados.json", "r") as f:
+#    dados = json.load(f)
+dados = consultar_wallets()
+
+print("Verificando ",len(dados)," Carteiras")
 
 # === Processar cada carteira individualmente ===
-for grupo in dados:
-    for item in grupo:
+for item in dados:
         tipo = item["Type"]
         mnemonic = item["Mnemonic"]
 
