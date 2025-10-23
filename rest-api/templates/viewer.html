@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wallet Viewer</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🔐 Wallet Viewer</h1>
+    <div class="qr">
+        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code">
+    </div>
+    <div class="info">
+        <p><strong>Tipo:</strong> {{ wallet.Type }}</p>
+        <p><strong>Últimas palavras:</strong> {{ wallet.Mnemonic.split()[-3:] | join(" ") }}</p>
+    </div>
+    <form method="post" action="{{ url_for('navigate_wallet', direction='prev') }}">
+        <button type="submit">⬅️ Anterior</button>
+    </form>
+    <form method="post" action="{{ url_for('navigate_wallet', direction='next') }}">
+        <button type="submit">Próxima ➡️</button>
+    </form>
+</body>
+</html>

@@ -1,5 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template, redirect, url_for
 from models import db, Wallet
+import qrcode
+import io
+import base64
+
+'''
+wallet_app/
+├── app.py                  # Servidor Flask principal
+├── models.py               # Definição do modelo Wallet e banco de dados
+├── templates/
+│   └── viewer.html         # Template HTML para visualização com QR Code
+└── static/
+    └── style.css           # Estilos opcionais
+'''
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wallets.db'
@@ -9,6 +23,17 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+wallet_index = 0
+
+def generate_qr_code(data):
+    qr = qrcode.QRCode(box_size=10, border=2)
+    qr.add_data(data)
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
 @app.route('/wallets', methods=['POST'])
 def add_wallets():
     data = request.get_json()
@@ -16,7 +41,7 @@ def add_wallets():
     for group in data:
         for item in group:
             if Wallet.query.get(item['Address']):
-                continue  # Ignora duplicatas
+                continue
             wallet = Wallet(**item)
             db.session.add(wallet)
             added += 1
@@ -35,7 +60,29 @@ def get_wallets():
     } for w in wallets]
     return jsonify(result)
 
+@app.route("/", methods=["GET"])
+def wallet_viewer():
+    global wallet_index
+    wallets = Wallet.query.all()
+    if not wallets:
+        return "<h2>Nenhuma carteira disponível</h2>"
+    wallet = wallets[wallet_index]
+    qr_code = generate_qr_code(wallet.Mnemonic)
+    return render_template("viewer.html", wallet=wallet, qr_code=qr_code)
+
+@app.route("/navigate/<direction>", methods=["POST"])
+def navigate_wallet(direction):
+    global wallet_index
+    wallets = Wallet.query.all()
+    if not wallets:
+        return redirect(url_for("wallet_viewer"))
+
+    if direction == "next":
+        wallet_index = (wallet_index + 1) % len(wallets)
+    elif direction == "prev":
+        wallet_index = (wallet_index - 1) % len(wallets)
+
+    return redirect(url_for("wallet_viewer"))
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000,debug=True)
-
-
+    app.run(host='0.0.0.0', port=5000, debug=True)
