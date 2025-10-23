@@ -3,6 +3,7 @@ from models import db, Wallet
 import qrcode
 import io
 import base64
+import json
 
 '''
 wallet_app/
@@ -12,6 +13,8 @@ wallet_app/
 │   └── viewer.html         # Template HTML para visualização com QR Code
 └── static/
     └── style.css           # Estilos opcionais
+    
+pip install flask flask_sqlalchemy qrcode[pil]    
 '''
 
 
@@ -24,7 +27,7 @@ with app.app_context():
     db.create_all()
 
 wallet_index = 0
-
+'''
 def generate_qr_code(data):
     qr = qrcode.QRCode(box_size=10, border=2)
     qr.add_data(data)
@@ -33,6 +36,32 @@ def generate_qr_code(data):
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return base64.b64encode(buf.getvalue()).decode("utf-8")
+'''
+
+def generate_qr_code(wallet):
+    type_map = {
+        "SegWit (BIP84)": "HDsegwitBech32",
+        "Legacy (BIP44)": "HDlegacy",
+        "P2SH (BIP49)": "HDsegwitP2SH"
+    }
+
+    qr_payload = {
+        "type": type_map.get(wallet.Type, "HDsegwitBech32"),
+        "label": f"Wallet {wallet.Address[:6]}",
+        "mnemonic": wallet.Mnemonic,
+        "passphrase": "",
+        "network": "mainnet"
+    }
+
+    qr = qrcode.QRCode(box_size=10, border=2)
+    qr.add_data(json.dumps(qr_payload))
+    qr.make(fit=True)
+    img = qr.make_image(fill_color="black", back_color="white")
+    buf = io.BytesIO()
+    img.save(buf, format="PNG")
+    return base64.b64encode(buf.getvalue()).decode("utf-8")
+
+
 
 @app.route('/wallets', methods=['POST'])
 def add_wallets():
@@ -67,7 +96,8 @@ def wallet_viewer():
     if not wallets:
         return "<h2>Nenhuma carteira disponível</h2>"
     wallet = wallets[wallet_index]
-    qr_code = generate_qr_code(wallet.Mnemonic)
+    #qr_code = generate_qr_code(wallet.Mnemonic)
+    qr_code = generate_qr_code(wallet)
     return render_template("viewer.html", wallet=wallet, qr_code=qr_code)
 
 @app.route("/navigate/<direction>", methods=["POST"])
