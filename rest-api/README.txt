@@ -1,0 +1,1 @@
+Flask application to serve as wallet repository for the project scripts
