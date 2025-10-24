@@ -94,13 +94,20 @@ def wallet_viewer():
     global wallet_index
     wallets = Wallet.query.all()
     total_wallets = len(wallets)
-    if not wallets:
-        return "<h2>Nenhuma carteira disponível</h2>"
-    wallet = wallets[wallet_index]
-    #qr_code = generate_qr_code(wallet.Mnemonic)
-    qr_code = generate_qr_code(wallet)
-    return render_template("viewer.html", wallet=wallet, qr_code=qr_code, total_wallets=total_wallets, current_index=wallet_index + 1  # para exibir como 1-based )
 
+    if total_wallets == 0:
+        return "<h2>Nenhuma carteira disponível</h2>"
+
+    wallet = wallets[wallet_index]
+    qr_code = generate_qr_code(wallet)
+
+    return render_template(
+        "viewer.html",
+        wallet=wallet,
+        qr_code=qr_code,
+        total_wallets=total_wallets,
+        current_index=wallet_index + 1  # para exibir como 1-based
+    )
 @app.route("/navigate/<direction>", methods=["POST"])
 def navigate_wallet(direction):
     global wallet_index
@@ -118,3 +125,4 @@ def navigate_wallet(direction):
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=5000, debug=True)
+
