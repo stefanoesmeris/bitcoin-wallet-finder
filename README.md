@@ -10,3 +10,6 @@ Usage: python3 main.py --N 0 --U http://your.api.here:8080/rest-api
 
 The values --U and --N can informed once time, after this it's stored in a local file "setup.json"
 Use these args again if you want update them.
+
+# git clone https://github.com/stefanoesmeris/bitcoin-wallet-finder.git
+# pip install bip-utils requests mnemonic
