@@ -12,4 +12,5 @@ The values --U and --N can informed once time, after this it's stored in a local
 Use these args again if you want update them.
 
 git clone https://github.com/stefanoesmeris/bitcoin-wallet-finder.git
+
 pip3 install bip-utils requests mnemonic
