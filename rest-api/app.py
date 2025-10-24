@@ -98,7 +98,7 @@ def wallet_viewer():
         return "<h2>Nenhuma carteira disponível</h2>"
 
     wallet = wallets[wallet_index]
-    qr_code = generate_qr_code(wallet)
+    qr_code = generate_qr_code(wallet.mnemonic)
 
     return render_template(
         "viewer.html",
@@ -123,6 +123,7 @@ def navigate_wallet(direction):
 
 if __name__ == '__main__':
 
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=80, debug=True)
+
 
 
