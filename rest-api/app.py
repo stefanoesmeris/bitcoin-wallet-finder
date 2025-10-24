@@ -92,13 +92,13 @@ def get_wallets():
 def wallet_viewer():
     global wallet_index
     wallets = Wallet.query.all()
-    total_wallets = len(wallets.Mnemonic)
+    total_wallets = len(wallets)
 
     if total_wallets == 0:
         return "<h2>Nenhuma carteira disponível</h2>"
 
     wallet = wallets[wallet_index]
-    qr_code = generate_qr_code(wallet)
+    qr_code = generate_qr_code(wallet.Mnemonic)
 
     return render_template(
         "viewer.html",
@@ -124,6 +124,7 @@ def navigate_wallet(direction):
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=80, debug=True)
+
 
 
 
