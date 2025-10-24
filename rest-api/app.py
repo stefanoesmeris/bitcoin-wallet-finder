@@ -17,7 +17,6 @@ wallet_app/
 pip install flask flask_sqlalchemy qrcode[pil]    
 '''
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///wallets.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -27,7 +26,7 @@ with app.app_context():
     db.create_all()
 
 wallet_index = 0
-'''
+
 def generate_qr_code(data):
     qr = qrcode.QRCode(box_size=10, border=2)
     qr.add_data(data)
@@ -36,8 +35,8 @@ def generate_qr_code(data):
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return base64.b64encode(buf.getvalue()).decode("utf-8")
+    
 '''
-
 def generate_qr_code(wallet):
     type_map = {
         "SegWit (BIP84)": "HDsegwitBech32",
@@ -60,7 +59,7 @@ def generate_qr_code(wallet):
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return base64.b64encode(buf.getvalue()).decode("utf-8")
-
+'''
 
 
 @app.route('/wallets', methods=['POST'])
@@ -125,4 +124,5 @@ def navigate_wallet(direction):
 if __name__ == '__main__':
 
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
