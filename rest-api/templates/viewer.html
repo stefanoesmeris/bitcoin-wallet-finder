@@ -11,6 +11,7 @@
     </div>
     <div class="info">
         <p><strong>Tipo:</strong> {{ wallet.Type }}</p>
+        <p>Carteira atual: {{ current_index }} de {{ total_wallets }}</p>
         <p><strong>Últimas palavras:</strong> {{ wallet.Mnemonic.split()[-3:] | join(" ") }}</p>
     </div>
     <form method="post" action="{{ url_for('navigate_wallet', direction='prev') }}">
@@ -20,4 +21,5 @@
         <button type="submit">Próxima ➡️</button>
     </form>
 </body>
+
 </html>
