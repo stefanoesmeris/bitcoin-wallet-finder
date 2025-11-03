@@ -13,7 +13,7 @@ btc = BitcoinUtils()
 
 # === Processar cada carteira individualmente ===
 def check_wallet(dados):
-    for item in dados:
+    for item in dados[::-1]:
         tipo = item["Type"]
         mnemonic = item["Mnemonic"]
 
@@ -40,4 +40,5 @@ def check_wallet(dados):
 # === Executar verificação ===
 dados = api.consultar_wallets()
 print("Verificando", len(dados), "carteiras")
+
 check_wallet(dados)
