@@ -102,15 +102,15 @@ class BitcoinUtils:
 
             self.check_addresses(Bip44, Bip44Coins.BITCOIN, "Legacy (BIP44)", 44, mnemonic, config, api)
             print("Looking BIP44 Legacy\n")
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             self.check_addresses(Bip49, Bip49Coins.BITCOIN, "P2SH (BIP49)", 49, mnemonic, config, api)
             print("Looking BIP49 P2SH\n")
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             self.check_addresses(Bip84, Bip84Coins.BITCOIN, "SegWit (BIP84)", 84, mnemonic, config, api)
             print("Looking BIP84 SegWit\n")
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             print("✅ Tarefa concluída.\n")
 
@@ -161,3 +161,4 @@ class BitcoinUtils:
 
 
         return enderecos        
+
