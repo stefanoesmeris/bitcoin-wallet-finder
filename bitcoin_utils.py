@@ -34,6 +34,7 @@ class BitcoinUtils:
                     time.sleep(300 * (attempt + 1))
                 else:
                     print(f"[{attempt+1}] Código inesperado: {response.status_code}")
+                    time.sleep(2 ** attempt)
             except requests.exceptions.RequestException as e:
                 print(f"[{attempt+1}] Erro de conexão: {e}")
                 time.sleep(2 ** attempt)
@@ -157,5 +158,6 @@ class BitcoinUtils:
             chave = bip32_ctx.DerivePath(path)
             endereco = P2PKHAddr.EncodeKey(chave.PublicKey())
             enderecos.append(endereco)
+
 
         return enderecos        
