@@ -26,6 +26,8 @@ class ConfigUtils:
         else:
             dados_existentes = []
 
-        dados_existentes.append(data)
+        # dados_existentes.append(data)
+        dados_existentes.extend(data)
         with open(filename, "w") as f:
+
             json.dump(dados_existentes, f, indent=4)
