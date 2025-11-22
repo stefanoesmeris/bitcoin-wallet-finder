@@ -1,2 +1,5 @@
+# Change the /home/user according with your directory.
+# add these lines to your /etc/crontab
 */5 *    * * *   root    /home/user/bitcoin-wallet-finder/verify.sh
 0   5    * * *   root    /home/user/bitcoin-wallet-finder/upload.py
+
